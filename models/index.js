@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import "dotenv/config";
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+export const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   dialectOptions: {
     ssl: {
@@ -10,7 +10,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     },
   },
 });
-
 
 import userModel from "./user.model.js";
 import gadgetModel from "./gadget.model.js";
