@@ -6,11 +6,12 @@ const options = {
     info: {
       title: 'IMF Gadget API',
       version: '1.0.0',
-      description: 'A secure and robust RESTful API for managing users, gadgets, deployments, and self-destruction operations, built with Express.js, Sequelize, and PostgreSQL.'
+      description:
+        'A secure and robust RESTful API for managing users, gadgets, deployments, and self-destruction operations, built with Express.js, Sequelize, and PostgreSQL.'
     },
     servers: [
       {
-        url: 'http://localhost:5000'
+        url: process.env.BASE_URL || 'http://localhost:5000'
       }
     ],
     tags: [
