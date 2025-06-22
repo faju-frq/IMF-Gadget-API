@@ -1,34 +1,36 @@
-import { body } from "express-validator";
+import { body } from 'express-validator'
 
 export const validateRegister = [
-  body("name")
+  body('name')
+    .trim()
     .notEmpty()
-    .withMessage("Name is required"),
+    .withMessage('Name is required')
+    .isLength({ max: 50 })
+    .withMessage('Name must be less than 50 characters')
+    .matches(/^[a-zA-Z\s]+$/)
+    .withMessage('Name must contain only letters and spaces'),
 
-  body("email")
-    .isEmail()
-    .withMessage("Please provide a valid email"),
+  body('email').isEmail().withMessage('Please provide a valid email'),
 
-  body("phone")
+  body('phone_number')
+    .trim()
     .notEmpty()
-    .withMessage("Phone number is required"),
+    .withMessage('Phone number is required')
+    .isMobilePhone('any', { strictMode: false })
+    .withMessage('Phone number must be valid'),
 
-  body("password")
+  body('password')
     .isStrongPassword({
       minLength: 8,
       minLowercase: 1,
       minUppercase: 1,
-      minNumbers: 1,
+      minNumbers: 1
     })
-    .withMessage("Password must be strong with 8+ chars, upper/lowercase, and a number"),
-];
+    .withMessage('Password must be strong with 8+ chars, upper/lowercase, and a number')
+]
 
 export const validateLogin = [
-  body("email")
-    .isEmail()
-    .withMessage("Enter a valid email"),
+  body('email').isEmail().withMessage('Enter a valid email'),
 
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required"),
-];
+  body('password').notEmpty().withMessage('Password is required')
+]

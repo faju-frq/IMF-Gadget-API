@@ -52,6 +52,12 @@ export const listGadgets = async (req, res) => {
 
     const allgadgets = await Gadgets.findAll({ where: filter })
 
+    if (allgadgets.length === 0) {
+      return res.status(404).json({
+        message: `No gadgets found${status ? ` with status '${status}'` : ''}.`
+      })
+    }
+
     const gadgets = allgadgets.map(transformGadget)
 
     res.status(200).json(gadgets)

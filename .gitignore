@@ -4,6 +4,9 @@ node_modules/
 # Environment variables
 .env
 
+# Truncating table scripts
+scripts/
+
 # Logs
 logs/
 *.log

@@ -2,6 +2,7 @@ import express from 'express'
 import { register, login, logout, deleteUser } from '../controllers/auth.controller.js'
 import { authenticate } from '../middleware/auth.middleware.js'
 import { validateLogin, validateRegister } from '../middleware/validation/auth.validation.js'
+import { validateRequest } from '../middleware/validation/validateRequest.middleware.js'
 
 const router = express.Router()
 
@@ -70,7 +71,7 @@ const router = express.Router()
  *         description: Internal server error
  */
 
-router.post('/register', validateLogin, register)
+router.post('/register', validateRegister, validateRequest, register)
 
 /**
  * @swagger
@@ -115,10 +116,10 @@ router.post('/register', validateLogin, register)
  *                   type: string
  *                   example: Invalid credentials provided
  *      500:
- *        description: Internal server error 
+ *        description: Internal server error
  */
 
-router.post('/login', validateRegister, login)
+router.post('/login', validateLogin, validateRequest, login)
 
 /**
  * @swagger
@@ -135,12 +136,12 @@ router.post('/login', validateRegister, login)
  *         description: Internal server error
  */
 
-router.post('/logout',authenticate, logout)
+router.post('/logout', authenticate, logout)
 
 /**
  * @swagger
  * /api/auth/deleteUser:
- *   delete:
+ *   post:
  *     summary: Delete the currently logged-in user
  *     tags: [Auth]
  *     security:
