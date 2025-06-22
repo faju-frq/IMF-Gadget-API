@@ -20,7 +20,7 @@ export const validateRegister = [
   body('phone_number')
     .notEmpty()
     .withMessage('Phone number is required')
-    .isMobilePhone('any', { strictMode: false })
+    .isMobilePhone('en-IN', { strictMode: false })
     .withMessage('Phone number must be valid')
     .custom((value) => {
     if (/^\s/.test(value) || /\s$/.test(value)) {

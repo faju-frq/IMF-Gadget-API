@@ -36,6 +36,7 @@ A secure and robust RESTful API for managing users, gadgets, deployments, and se
 - **Deployment**: Assign and deploy gadgets to missions.
 - **Self-Destruction**: Securely trigger gadget self-destruction.
 - **API Documentation**: Interactive Swagger UI at `/api-docs`.
+- **Strict Validation**: Strictly validates user inputs.
 
 ## Tech Stack
 
@@ -43,6 +44,7 @@ A secure and robust RESTful API for managing users, gadgets, deployments, and se
 - **Database**: PostgreSQL (via Sequelize ORM)
 - **Authentication**: JWT, HTTP-only cookies
 - **Documentation**: Swagger (OpenAPI 3.0)
+- **Validation**: express-validator
 
 ## Getting Started
 
@@ -83,16 +85,15 @@ A secure and robust RESTful API for managing users, gadgets, deployments, and se
      npm start
      ```
 
-
 ## Environment Variables
 
 | Variable    | Description       | Example             |
 | ----------- | ----------------- | ------------------- |
 | PORT        | Server port       | 5000                |
 | DB_HOST     | Database host     | localhost           |
-| DB_USER     | Database user     | your_username            |
-| DB_PASSWORD | Database password | your_password        |
-| DB_NAME     | Database name     | your_database_name |
+| DB_USER     | Database user     | your_username       |
+| DB_PASSWORD | Database password | your_password       |
+| DB_NAME     | Database name     | your_database_name  |
 | DB_DIALECT  | Database dialect  | postgres            |
 | JWT_SECRET  | JWT secret key    | your_jwt_secret_key |
 
@@ -164,6 +165,8 @@ Contributions, issues, and feature requests are welcome! Please open an issue or
 - Input validation and error handling
 - CORS enabled
 - Passwords are hashed using bcryptjs
+- Strict validation for user input
+- User-friendly error messages
 
 ## License
 
