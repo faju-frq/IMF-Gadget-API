@@ -5,16 +5,26 @@ export const validateGadgetId = [param('id').isUUID().withMessage('Gadget ID mus
 export const validateGadgetUpdate = [
   body('name')
     .optional()
-    .trim()
     .matches(/^[a-zA-Z\s]+$/)
     .notEmpty()
-    .withMessage('Name cannot be empty'),
+    .withMessage('Name cannot be empty')
+    .custom((value) => {
+      if (/^\s/.test(value) || /\s$/.test(value)) {
+        throw new Error('Name cannot start or end with a space')
+      }
+      return true
+    }),
   body('skin')
     .optional()
-    .trim()
     .matches(/^[a-zA-Z\s]+$/)
     .notEmpty()
     .withMessage('Skin cannot be empty')
+    .custom((value) => {
+      if (/^\s/.test(value) || /\s$/.test(value)) {
+        throw new Error('Name cannot start or end with a space')
+      }
+      return true
+    })
 ]
 
 export const validateStatusQuery = [

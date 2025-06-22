@@ -2,22 +2,32 @@ import { body } from 'express-validator'
 
 export const validateRegister = [
   body('name')
-    .trim()
     .notEmpty()
     .withMessage('Name is required')
     .isLength({ max: 50 })
     .withMessage('Name must be less than 50 characters')
     .matches(/^[a-zA-Z\s]+$/)
-    .withMessage('Name must contain only letters and spaces'),
+    .withMessage('Name must contain only letters and spaces')
+    .custom((value) => {
+    if (/^\s/.test(value) || /\s$/.test(value)) {
+      throw new Error('Name cannot start or end with a space');
+    }
+    return true;
+  }),
 
   body('email').isEmail().withMessage('Please provide a valid email'),
 
   body('phone_number')
-    .trim()
     .notEmpty()
     .withMessage('Phone number is required')
     .isMobilePhone('any', { strictMode: false })
-    .withMessage('Phone number must be valid'),
+    .withMessage('Phone number must be valid')
+    .custom((value) => {
+    if (/^\s/.test(value) || /\s$/.test(value)) {
+      throw new Error('Mobile number cannot start or end with a space');
+    }
+    return true;
+  }),
 
   body('password')
     .isStrongPassword({
