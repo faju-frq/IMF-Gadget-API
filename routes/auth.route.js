@@ -28,15 +28,19 @@ const router = express.Router()
  *               name:
  *                 type: string
  *                 example: John Doe
+ *                 description: Must contain only letters and spaces, cannot start or end with a space, and must be less than 50 characters.
  *               email:
  *                 type: string
  *                 example: Johndoe@example.com
+ *                 description: Must be a valid email address.  
  *               phone_number:
  *                 type: string
- *                 example: 1234567890
+ *                 example: 9123456789
+ *                 description: Must be a valid Indian mobile number (Start with 6, 7, 8, or 9. can also have +91 or 91 before the number)
  *               password:
  *                 type: string
  *                 example: John@123.
+ *                 description: Must be a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters. 
  *     responses:
  *       201:
  *         description: User registered successfully
