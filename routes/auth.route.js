@@ -32,7 +32,7 @@ const router = express.Router()
  *               email:
  *                 type: string
  *                 example: Johndoe@example.com
- *                 description: Must be a valid email address.  
+ *                 description: Must be a valid email address.
  *               phone_number:
  *                 type: string
  *                 example: 9123456789
@@ -40,7 +40,7 @@ const router = express.Router()
  *               password:
  *                 type: string
  *                 example: John@123.
- *                 description: Must be a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters. 
+ *                 description: Must be a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters.
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -70,7 +70,15 @@ const router = express.Router()
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Email already registered
+ *             examples:
+ *               emailRegistered:
+ *                 summary: Email already registered
+ *                 value:
+ *                   message: Email already registered
+ *               phoneRegistered:
+ *                 summary: Phone number already registered
+ *                 value:
+ *                   message: Phone number already registered
  *       500:
  *         description: Internal server error
  */
@@ -136,6 +144,16 @@ router.post('/login', validateLogin, validateRequest, login)
  *     responses:
  *       200:
  *         description: User logged out successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized: No token provided"
  *       500:
  *         description: Internal server error
  */

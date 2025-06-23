@@ -54,7 +54,15 @@ const router = express.Router()
  *                      type: string
  *                      example: The annualwhitefirefly - 44% success probability (red skin)
  *      401:
- *        description: Unauthorised access
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized: No token provided"
  *      500:
  *        description: Internal server error
  */
@@ -139,6 +147,14 @@ router.get('/', validateStatusQuery, validateRequest, listGadgets)
  *         description: Invalid input data
  *       401:
  *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorised: No token provided"
  *       404:
  *         description: Gadget not found
  *       500:
