@@ -35,7 +35,7 @@ const options = {
     components: {
       securitySchemes: {
         cookieAuth: {
-          type: 'apikey',
+          type: 'apiKey',
           in: 'cookie',
           name: 'token'
         }

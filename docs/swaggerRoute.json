@@ -1,0 +1,701 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "IMF Gadget API",
+    "version": "1.0.0",
+    "description": "A secure and robust RESTful API for managing users, gadgets, deployments, and self-destruction operations, built with Express.js, Sequelize, and PostgreSQL."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication routes (register, login, logout, delete)"
+    },
+    {
+      "name": "Gadgets",
+      "description": "Gadget inventory and management"
+    },
+    {
+      "name": "Deployment",
+      "description": "Deploy gadgets to missions"
+    },
+    {
+      "name": "Destruction",
+      "description": "Self-destruction of gadgets"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token"
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "Register a new user by providing details.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone_number", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe",
+                    "description": "Must contain only letters and spaces, cannot start or end with a space, and must be less than 50 characters."
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "Johndoe@example.com",
+                    "description": "Must be a valid email address."
+                  },
+                  "phone_number": {
+                    "type": "string",
+                    "example": 9123456789,
+                    "description": "Must be a valid Indian mobile number (Start with 6, 7, 8, or 9. can also have +91 or 91 before the number)"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "John@123.",
+                    "description": "Must be a strong password with at least 8 characters, including uppercase, lowercase, numbers, and special characters."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "Johndoe@example.com"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "example": 1234567890
+                    },
+                    "password": {
+                      "type": "string",
+                      "example": "John@123."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "emailRegistered": {
+                    "summary": "Email already registered",
+                    "value": {
+                      "message": "Email already registered"
+                    }
+                  },
+                  "phoneRegistered": {
+                    "summary": "Phone number already registered",
+                    "value": {
+                      "message": "Phone number already registered"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Log in user",
+        "description": "Login user by providing registered mail and password",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "Johndoe@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "John@123."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login successfull"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Inavalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Log out user",
+        "tags": ["Auth"],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User logged out successfully"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized: No token provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/auth/deleteUser": {
+      "post": {
+        "summary": "Delete the currently logged-in user",
+        "tags": ["Auth"],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["confirmationText"],
+                "properties": {
+                  "confirmationText": {
+                    "type": "string",
+                    "example": "delete my account",
+                    "description": "Must be exactly 'delete my account' to confirm deletion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User deleted successfully."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid confirmation text",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Please type 'delete my account' to confirm deletion."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/deployment/{id}/deployed": {
+      "patch": {
+        "summary": "Deploy a Gadget",
+        "description": "Deploy a gadget and update its status as deployed",
+        "tags": ["Deployment"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gadget deployed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gadget deployed successfully"
+                    },
+                    "gadget": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "user_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "owner_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "Deployed"
+                        },
+                        "deployed_at": {
+                          "type": "string",
+                          "example": "2025-06-21T10:51:13.135Z"
+                        },
+                        "self_destruct_sequence": {
+                          "type": "integer",
+                          "example": 999999
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "The annualwhitefirefly - 44% success probability (red skin)"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Gadget not available for deployment"
+          },
+          "404": {
+            "description": "Gadget not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/gadgets": {
+      "post": {
+        "summary": "Create a new gadget",
+        "description": "Automatically create a new gadget without any user input",
+        "tags": ["Gadgets"],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Gadget created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gadget created successfully"
+                    },
+                    "gadget": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "Available"
+                        },
+                        "owner_id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "self_destruct_sequence": {
+                          "type": "integer",
+                          "example": 999999
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "The annualwhitefirefly - 44% success probability (red skin)"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized: No token provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of all gadgets",
+        "tags": ["Gadgets"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": ["Available", "Deployed", "Destroyed", "Decommissioned"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/gadgets/{id}": {
+      "patch": {
+        "summary": "Update gadget's name or skin",
+        "tags": ["Gadgets"],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The UUID of the gadget to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "skin": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update successfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "nameUpdated": {
+                    "summary": "Only name updated",
+                    "value": {
+                      "message": "Name updated successfully"
+                    }
+                  },
+                  "skinUpdated": {
+                    "summary": "Only skin updated",
+                    "value": {
+                      "message": "Skin updated successfully"
+                    }
+                  },
+                  "bothUpdated": {
+                    "summary": "Both name and skin updated",
+                    "value": {
+                      "message": "Name and skin updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No fields to update provided"
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorised: No token provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gadget not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/gadgets/{id}/decommission": {
+      "patch": {
+        "summary": "Decommission a gadget",
+        "description": "Decommission a gadget and update its status as decommissioned",
+        "tags": ["Gadgets"],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gadget decommissioned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gadget decommissioned successfully"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Decommissioned"
+                    },
+                    "decommissioned_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gadget not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/destruction/{id}/self-destruct": {
+      "patch": {
+        "summary": "Self-destruct a deployed gadget",
+        "description": "Self-destruct a deployed gadget and update its status as destroyed",
+        "tags": ["Destruction"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gadget destroyed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Gadget self-destructed successfully"
+                    },
+                    "self_destruct_sequence": {
+                      "type": "integer",
+                      "example": 999999
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Destroyed"
+                    },
+                    "destroyed_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gadget not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}
