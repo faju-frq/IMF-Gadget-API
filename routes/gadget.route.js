@@ -154,7 +154,7 @@ router.get('/', validateStatusQuery, validateRequest, listGadgets)
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Unauthorised: No token provided"
+ *                   example: "Unauthorized: No token provided"
  *       404:
  *         description: Gadget not found
  *       500:

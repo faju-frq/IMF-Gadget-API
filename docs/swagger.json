@@ -7,7 +7,10 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5000"
+        "url": "http://localhost:5000"
+      },
+      {
+        "url": "https://imf-gadget-api-meq6.onrender.com"
     }
   ],
   "tags": [
@@ -184,7 +187,7 @@
             }
           },
           "401": {
-            "description": "Inavalid credentials",
+            "description": "Invalid credentials",
             "content": {
               "application/json": {
                 "schema": {
@@ -524,7 +527,7 @@
         },
         "responses": {
           "200": {
-            "description": "Update successfull",
+            "description": "Update successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -573,7 +576,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "Unauthorised: No token provided"
+                      "example": "Unauthorized: No token provided"
                     }
                   }
                 }

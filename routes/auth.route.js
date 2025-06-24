@@ -118,7 +118,7 @@ router.post('/register', validateRegister, validateRequest, register)
  *                   type: string
  *                   example: Login successfull
  *      401:
- *        description: Inavalid credentials
+ *        description: Invalid credentials
  *        content:
  *          application/json:
  *            schema:
